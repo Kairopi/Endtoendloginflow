@@ -1,0 +1,236 @@
+@custom-variant dark (&:is(.dark *));
+
+/* Pip canonical 20-token color system (Requirement 32) */
+:root {
+  --font-size: 16px;
+
+  /* Light-mode Pip tokens (R32 criterion 1) */
+  --color-text-primary: #3D405B;
+  --color-text-secondary: #6E7184;
+  --color-text-tertiary: #B5B0A0;
+  --color-bg: #F4F1DE;
+  --color-surface: #FBF8EE;
+  --color-surface-raised: #FEFCF5;
+  --color-surface-recessed: #EDE8D2;
+  --color-hairline: #E5DFC9;
+  --color-brand: #E07A5F;
+  --color-brand-text: #C95F45;
+  --color-brand-whisper: #FCF4F0;
+  --color-positive: #81B29A;
+  --color-positive-text: #558870;
+  --color-positive-whisper: #F0F6F2;
+  --color-pip-accent: #F2CC8F;
+  --color-emergency: #C0392B;
+  --color-emergency-text: #9C2A1F;
+  --color-emergency-whisper: #FBE8E5;
+  --color-warning: #D4933F;
+  --color-warning-text: #9E6620;
+  --color-info: #5478A3;
+
+  /* Shadcn semantic remap onto Pip tokens */
+  --background: var(--color-bg);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-surface-raised);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-brand);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-surface-recessed);
+  --secondary-foreground: var(--color-text-primary);
+  --muted: var(--color-surface-recessed);
+  --muted-foreground: var(--color-text-secondary);
+  --accent: var(--color-brand-whisper);
+  --accent-foreground: var(--color-brand-text);
+  --destructive: var(--color-emergency);
+  --destructive-foreground: #ffffff;
+  --border: var(--color-hairline);
+  --input: transparent;
+  --input-background: var(--color-surface-recessed);
+  --switch-background: var(--color-hairline);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: var(--color-brand);
+  --chart-1: var(--color-brand);
+  --chart-2: var(--color-positive);
+  --chart-3: var(--color-info);
+  --chart-4: var(--color-warning);
+  --chart-5: var(--color-pip-accent);
+  --radius: 0.875rem;
+  --sidebar: var(--color-surface);
+  --sidebar-foreground: var(--color-text-primary);
+  --sidebar-primary: var(--color-brand);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--color-brand-whisper);
+  --sidebar-accent-foreground: var(--color-brand-text);
+  --sidebar-border: var(--color-hairline);
+  --sidebar-ring: var(--color-brand);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark-mode Pip tokens (R32 criterion 2) */
+    --color-bg: #1A1B2E;
+    --color-surface: #252740;
+    --color-surface-raised: #2E3148;
+    --color-surface-recessed: #161726;
+    --color-hairline: #3D405B;
+    --color-text-primary: #F4F1DE;
+    --color-text-secondary: #C5C0A8;
+    --color-text-tertiary: #8E8A78;
+    --color-brand: #F49B82;
+    --color-brand-text: #F49B82;
+    --color-positive: #A8D5BD;
+    --color-positive-text: #A8D5BD;
+    --color-pip-accent: #FFE1AB;
+    --color-emergency: #FF6B5B;
+    --color-emergency-text: #FF6B5B;
+    --color-warning: #E8B567;
+    --color-warning-text: #E8B567;
+    --color-info: #7FA0CC;
+  }
+}
+
+.dark {
+  --color-bg: #1A1B2E;
+  --color-surface: #252740;
+  --color-surface-raised: #2E3148;
+  --color-surface-recessed: #161726;
+  --color-hairline: #3D405B;
+  --color-text-primary: #F4F1DE;
+  --color-text-secondary: #C5C0A8;
+  --color-text-tertiary: #8E8A78;
+  --color-brand: #F49B82;
+  --color-brand-text: #F49B82;
+  --color-positive: #A8D5BD;
+  --color-positive-text: #A8D5BD;
+  --color-pip-accent: #FFE1AB;
+  --color-emergency: #FF6B5B;
+  --color-emergency-text: #FF6B5B;
+  --color-warning: #E8B567;
+  --color-warning-text: #E8B567;
+  --color-info: #7FA0CC;
+}
+
+@theme inline {
+  --font-serif: "Fraunces", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-surface-recessed: var(--color-surface-recessed);
+  --color-hairline: var(--color-hairline);
+  --color-brand: var(--color-brand);
+  --color-brand-text: var(--color-brand-text);
+  --color-brand-whisper: var(--color-brand-whisper);
+  --color-positive: var(--color-positive);
+  --color-positive-text: var(--color-positive-text);
+  --color-positive-whisper: var(--color-positive-whisper);
+  --color-pip-accent: var(--color-pip-accent);
+  --color-emergency: var(--color-emergency);
+  --color-emergency-text: var(--color-emergency-text);
+  --color-emergency-whisper: var(--color-emergency-whisper);
+  --color-warning: var(--color-warning);
+  --color-warning-text: var(--color-warning-text);
+  --color-info: var(--color-info);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+
+  html {
+    font-size: var(--font-size);
+  }
+}
+
+/* Editorial textured backdrop — recolored from Uiverse (SelfMadeSystem).
+   Cream base with coral fractal-noise burn-in, gently masked top→bottom. */
+.pip-textured-bg {
+  position: relative;
+  background: #F4F2E3;
+}
+.pip-textured-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.88  0 0 0 0 0.47  0 0 0 0 0.36  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    radial-gradient(80% 60% at 20% 0%, rgba(247,224,214,0.55) 0%, rgba(247,224,214,0) 60%),
+    radial-gradient(70% 60% at 100% 100%, rgba(224,122,95,0.18) 0%, rgba(224,122,95,0) 65%);
+  background-size: 220px 220px, auto, auto;
+  mix-blend-mode: multiply;
+  opacity: 0.42;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.95));
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.95));
+}
+.pip-textured-bg > * { z-index: 1; }
+.pip-textured-bg::before { z-index: 0; }
+
+html.pip-calm .pip-textured-bg::before { display: none; }
+
+/* Editorial pill button with rising coral fill — adapted from Uiverse (xueyuantan), recolored. */
+.pip-pill:hover .pip-pill__fill,
+.pip-pill:active .pip-pill__fill,
+.pip-pill:focus-visible .pip-pill__fill { width: 100%; }
+.pip-pill:hover .pip-pill__title,
+.pip-pill:active .pip-pill__title,
+.pip-pill:focus-visible .pip-pill__title { color: #fff; }
+.pip-pill:hover .pip-pill__subtitle,
+.pip-pill:active .pip-pill__subtitle,
+.pip-pill:focus-visible .pip-pill__subtitle { color: rgba(255,255,255,0.82); }
+.pip-pill:hover svg path,
+.pip-pill:hover svg rect,
+.pip-pill:hover svg circle,
+.pip-pill:active svg path,
+.pip-pill:active svg rect,
+.pip-pill:active svg circle { fill: #fff; transition: fill 0.35s ease; }
