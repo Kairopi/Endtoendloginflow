@@ -2,7 +2,29 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { usePip, newId, Medication } from '../../state/PipStore';
 import { findInteraction } from '../../data/rxnorm';
-import { ComplianceDisclaimer } from '../pip/ComplianceDisclaimer';
+
+function describeRegimen(meds: Medication[]): { primary: string; secondary?: string } | null {
+  if (meds.length === 0) return null;
+  let morning = 0;
+  let evening = 0;
+  let other = 0;
+  for (const m of meds) {
+    const f = (m.frequency || '').toLowerCase();
+    if (!f) {
+      other++;
+      continue;
+    }
+    if (/morning|\bam\b|breakfast|wake|sunrise/.test(f)) morning++;
+    else if (/evening|\bpm\b|night|dinner|bed|sleep|sunset/.test(f)) evening++;
+    else other++;
+  }
+  const cap = meds.length;
+  const primary = `${cap} ${cap === 1 ? 'medication' : 'medications'}.`;
+  const parts: string[] = [];
+  if (morning) parts.push(`${morning} morning`);
+  if (evening) parts.push(`${evening} night`);
+  return { primary, secondary: parts.length ? parts.join(', ') : undefined };
+}
 
 interface Props {
   onBack: () => void;
@@ -32,13 +54,15 @@ export function MedicationManager({ onBack }: Props) {
 
   const withPhotos = profileMeds.filter((m) => m.photoUrl).length;
   const withoutPhotos = profileMeds.length - withPhotos;
+  const allPhotographed = profileMeds.length > 0 && withoutPhotos === 0;
+  const regimen = useMemo(() => describeRegimen(profileMeds), [profileMeds]);
 
   return (
     <div
       className="pip-textured-bg w-full h-full overflow-y-auto"
       style={{
         background: '#F5F2E4',
-        paddingBottom: 'calc(max(env(safe-area-inset-bottom, 0px), 8px) + 110px)',
+        paddingBottom: 'calc(max(env(safe-area-inset-bottom, 0px), 8px) + 140px)',
         WebkitOverflowScrolling: 'touch',
         overscrollBehavior: 'contain',
       }}
@@ -52,81 +76,109 @@ export function MedicationManager({ onBack }: Props) {
           paddingRight: 'max(env(safe-area-inset-right, 0px), 22px)',
         }}
       >
-        <div className="flex items-center justify-between" style={{ marginBottom: 18 }}>
+        <div className="flex items-center" style={{ marginBottom: 18 }}>
           <button
             onClick={onBack}
             aria-label="Back"
+            className="flex items-center gap-1.5 active:opacity-70"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 10px 6px 6px',
-              background: 'rgba(61,64,91,0.06)',
-              borderRadius: 999,
+              background: 'none',
               border: 'none',
+              padding: 0,
               cursor: 'pointer',
               fontFamily: 'Inter',
               fontWeight: 500,
-              fontSize: 13,
-              color: '#3D405B',
+              fontSize: 14,
+              color: 'rgba(61,64,91,0.7)',
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M10 4l-4 4 4 4" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 12L5 8l5-4" />
             </svg>
             Back
           </button>
-          {profileMeds.length > 1 && (
-            <button
-              onClick={() => setWall(true)}
-              style={{
-                background: 'rgba(224,122,95,0.10)',
-                border: 'none',
-                borderRadius: 999,
-                padding: '6px 12px',
-                fontFamily: 'Inter',
-                fontWeight: 600,
-                fontSize: 12,
-                color: '#E07A5F',
-                letterSpacing: '-0.005em',
-                cursor: 'pointer',
-              }}
-            >
-              Show pharmacy
-            </button>
-          )}
         </div>
 
         <h1
           style={{
             fontFamily: 'var(--font-serif)',
-            fontVariationSettings: '"opsz" 96, "SOFT" 40',
+            fontVariationSettings: '"opsz" 96, "SOFT" 50',
             fontWeight: 400,
-            fontSize: 36,
+            fontSize: 'clamp(36px, 8.8vw, 44px)',
             color: '#3D405B',
-            lineHeight: 1.02,
-            letterSpacing: '-0.028em',
+            lineHeight: 0.95,
+            letterSpacing: '-0.03em',
             margin: 0,
           }}
         >
           Your <span style={{ fontStyle: 'italic' }}>cabinet</span>.
         </h1>
-        {profileMeds.length > 0 && (
-          <p
-            style={{
-              fontFamily: 'var(--font-serif)',
-              fontStyle: 'italic',
-              fontVariationSettings: '"opsz" 18',
-              fontSize: 14.5,
-              color: 'rgba(61,64,91,0.55)',
-              margin: '8px 0 0',
-              lineHeight: 1.5,
-              letterSpacing: '-0.005em',
-            }}
-          >
-            {profileMeds.length} {profileMeds.length === 1 ? 'medication' : 'medications'}
-            {withoutPhotos > 0 ? ` · ${withoutPhotos} still need a photo` : ' · all photographed'}
-          </p>
+        {regimen && (
+          <div style={{ marginTop: 10 }}>
+            <p
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontVariationSettings: '"opsz" 24',
+                fontWeight: 400,
+                fontSize: 16,
+                color: '#3D405B',
+                margin: 0,
+                lineHeight: 1.3,
+                letterSpacing: '-0.012em',
+              }}
+            >
+              {regimen.primary}
+              {regimen.secondary && (
+                <span
+                  style={{
+                    fontStyle: 'italic',
+                    color: 'rgba(61,64,91,0.55)',
+                    marginLeft: 6,
+                    letterSpacing: '-0.005em',
+                  }}
+                >
+                  {regimen.secondary}.
+                </span>
+              )}
+            </p>
+            {allPhotographed ? (
+              <p
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontStyle: 'italic',
+                  fontVariationSettings: '"opsz" 14',
+                  fontSize: 13.5,
+                  color: 'rgba(94,142,116,0.85)',
+                  margin: '6px 0 0',
+                  lineHeight: 1.4,
+                  letterSpacing: '-0.005em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#5E8E74" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2.5 6.5L5 9l4.5-5.5" />
+                </svg>
+                Pip remembers them all.
+              </p>
+            ) : (
+              <p
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontStyle: 'italic',
+                  fontVariationSettings: '"opsz" 14',
+                  fontSize: 13.5,
+                  color: 'rgba(224,122,95,0.85)',
+                  margin: '6px 0 0',
+                  lineHeight: 1.4,
+                  letterSpacing: '-0.005em',
+                }}
+              >
+                {withoutPhotos === 1 ? 'One still needs a photo.' : `${withoutPhotos} still need a photo.`}
+              </p>
+            )}
+          </div>
         )}
       </header>
 
@@ -215,17 +267,95 @@ export function MedicationManager({ onBack }: Props) {
               gap: 10,
             }}
           >
-            {profileMeds.map((m) => (
-              <MedCard key={m.id} med={m} onTap={() => setDetailMed(m)} />
+            {profileMeds.map((m, i) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <MedCard med={m} onTap={() => setDetailMed(m)} />
+              </motion.div>
             ))}
-            <AddMedTile onClick={() => setCapture({ mode: 'new' })} />
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: profileMeds.length * 0.05, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <AddMedTile onClick={() => setCapture({ mode: 'new' })} />
+            </motion.div>
           </div>
         )}
       </div>
 
-      <div style={{ padding: '24px 22px 0' }}>
-        <ComplianceDisclaimer />
-      </div>
+      {profileMeds.length > 0 && (
+        <p
+          style={{
+            margin: '28px 22px 0',
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontVariationSettings: '"opsz" 11',
+            fontSize: 11.5,
+            color: 'rgba(61,64,91,0.5)',
+            lineHeight: 1.5,
+            textAlign: 'center',
+            letterSpacing: '-0.005em',
+          }}
+        >
+          Not medical advice. For emergencies, call 911.
+        </p>
+      )}
+
+      {/* Floating action bar */}
+      {profileMeds.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed left-1/2"
+          style={{
+            bottom: 'max(env(safe-area-inset-bottom, 0px), 22px)',
+            transform: 'translateX(-50%)',
+            background: 'rgba(251,248,236,0.92)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            borderRadius: 999,
+            border: '0.5px solid rgba(61,64,91,0.12)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.04), 0 16px 36px rgba(120,110,90,0.16)',
+            padding: 6,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            zIndex: 50,
+          }}
+        >
+          {profileMeds.length > 1 && (
+            <>
+              <FloatingAction
+                onClick={() => setWall(true)}
+                icon={
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="3" width="12" height="10" rx="1.5" />
+                    <path d="M2 6h12M5 9h6" />
+                  </svg>
+                }
+                label="Show pharmacy"
+              />
+              <span style={{ width: 0.5, height: 18, background: 'rgba(61,64,91,0.15)' }} />
+            </>
+          )}
+          <FloatingAction
+            onClick={() => setCapture({ mode: 'new' })}
+            icon={
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M8 3v10M3 8h10" />
+              </svg>
+            }
+            label="Add a med"
+            primary
+          />
+        </motion.div>
+      )}
 
       {/* Floating add button when grid is non-empty (alternative to the tile) */}
       <AnimatePresence>
@@ -414,35 +544,39 @@ function MedCard({ med, onTap }: { med: Medication; onTap: () => void }) {
       >
         <p
           style={{
-            fontFamily: 'Inter',
-            fontWeight: 600,
-            fontSize: 13.5,
+            fontFamily: 'var(--font-serif)',
+            fontVariationSettings: '"opsz" 24, "SOFT" 40',
+            fontWeight: 500,
+            fontSize: 15,
             color: '#3D405B',
             margin: 0,
-            letterSpacing: '-0.005em',
+            letterSpacing: '-0.015em',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            lineHeight: 1.15,
           }}
         >
           {med.name || 'Untitled'}
         </p>
-        <p
-          style={{
-            fontFamily: 'var(--font-serif)',
-            fontStyle: 'italic',
-            fontVariationSettings: '"opsz" 12',
-            fontSize: 11.5,
-            color: 'rgba(61,64,91,0.55)',
-            margin: '2px 0 0',
-            lineHeight: 1.3,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {[med.dose, med.frequency].filter(Boolean).join(' · ') || med.purpose || '—'}
-        </p>
+        {([med.dose, med.frequency].filter(Boolean).join(' · ') || med.purpose) && (
+          <p
+            style={{
+              fontFamily: 'Inter',
+              fontWeight: 400,
+              fontSize: 11,
+              color: 'rgba(61,64,91,0.55)',
+              margin: '3px 0 0',
+              lineHeight: 1.3,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              letterSpacing: '0.005em',
+            }}
+          >
+            {[med.dose, med.frequency].filter(Boolean).join(' · ') || med.purpose}
+          </p>
+        )}
       </div>
     </motion.button>
   );
@@ -776,7 +910,7 @@ function MedicationCapture({
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Lisinopril, the round white one…"
+            placeholder="Lisinopril, the round white one."
             style={fieldStyle()}
           />
 
@@ -784,7 +918,7 @@ function MedicationCapture({
           <input
             value={purpose}
             onChange={(e) => setPurpose(e.target.value)}
-            placeholder="e.g. Blood pressure"
+            placeholder="Blood pressure"
             style={fieldStyle()}
           />
 
@@ -813,9 +947,9 @@ function MedicationCapture({
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Anything you want to remember — side effects, why it changed…"
+            placeholder="Side effects, dose changes, anything to remember."
             rows={3}
-            style={{ ...fieldStyle(), resize: 'none', fontFamily: 'Inter' }}
+            style={{ ...fieldStyle(), resize: 'none' }}
           />
         </div>
       </motion.div>
@@ -973,11 +1107,31 @@ function MedicationDetail({
           </div>
 
           {med.notes && (
-            <div style={{ marginTop: 22 }}>
-              <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 10, color: 'rgba(61,64,91,0.55)', letterSpacing: '0.14em', textTransform: 'uppercase', margin: 0 }}>
-                Notes
-              </p>
-              <p style={{ fontFamily: 'Inter', fontSize: 14, color: '#3D405B', margin: '6px 0 0', lineHeight: 1.55, letterSpacing: '-0.005em', whiteSpace: 'pre-wrap' }}>
+            <div style={{ marginTop: 24 }}>
+              <div
+                style={{
+                  marginBottom: 8,
+                  borderBottom: '0.5px solid rgba(61,64,91,0.18)',
+                  paddingBottom: 5,
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontStyle: 'italic',
+                    fontVariationSettings: '"opsz" 24, "SOFT" 40',
+                    fontWeight: 400,
+                    fontSize: 14.5,
+                    color: '#3D405B',
+                    letterSpacing: '-0.008em',
+                    margin: 0,
+                    lineHeight: 1.1,
+                  }}
+                >
+                  Notes
+                </p>
+              </div>
+              <p style={{ fontFamily: 'var(--font-serif)', fontVariationSettings: '"opsz" 18', fontSize: 14.5, color: '#3D405B', margin: 0, lineHeight: 1.55, letterSpacing: '-0.005em', whiteSpace: 'pre-wrap' }}>
                 {med.notes}
               </p>
             </div>
@@ -1073,11 +1227,21 @@ function PharmacyWall({ meds, onClose }: { meds: Medication[]; onClose: () => vo
         }}
       >
         <div>
-          <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', margin: 0 }}>
-            Show pharmacy
+          <p
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontVariationSettings: '"opsz" 96, "SOFT" 50',
+              fontSize: 28,
+              color: '#FBF8EC',
+              margin: 0,
+              letterSpacing: '-0.025em',
+              lineHeight: 1,
+            }}
+          >
+            What I'm <span style={{ fontStyle: 'italic' }}>taking</span>.
           </p>
-          <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontVariationSettings: '"opsz" 24', fontSize: 18, color: '#fff', margin: '4px 0 0', letterSpacing: '-0.005em' }}>
-            What I'm taking.
+          <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontVariationSettings: '"opsz" 14', fontSize: 13, color: 'rgba(255,255,255,0.55)', margin: '4px 0 0', letterSpacing: '-0.005em' }}>
+            Hand to the pharmacist.
           </p>
         </div>
         <button
@@ -1165,13 +1329,14 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <p
       style={{
-        fontFamily: 'Inter',
-        fontWeight: 600,
-        fontSize: 10,
-        color: 'rgba(61,64,91,0.55)',
-        letterSpacing: '0.14em',
-        textTransform: 'uppercase',
-        margin: '14px 0 6px',
+        fontFamily: 'var(--font-serif)',
+        fontStyle: 'italic',
+        fontVariationSettings: '"opsz" 18',
+        fontSize: 13,
+        color: 'rgba(61,64,91,0.62)',
+        letterSpacing: '-0.005em',
+        margin: '16px 0 6px',
+        paddingLeft: 4,
       }}
     >
       {children}
@@ -1209,6 +1374,44 @@ function primaryButtonStyle(): React.CSSProperties {
   };
 }
 
+function FloatingAction({
+  onClick,
+  icon,
+  label,
+  primary = false,
+}: {
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  primary?: boolean;
+}) {
+  return (
+    <motion.button
+      onClick={onClick}
+      whileTap={{ scale: 0.96 }}
+      whileHover={{ scale: 1.03 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+      className="flex items-center"
+      style={{
+        gap: 6,
+        padding: '8px 14px',
+        borderRadius: 999,
+        background: primary ? '#3D405B' : 'transparent',
+        color: primary ? '#FBF8EC' : '#3D405B',
+        fontFamily: 'Inter',
+        fontWeight: 600,
+        fontSize: 12,
+        letterSpacing: '0.01em',
+        cursor: 'pointer',
+        border: 'none',
+      }}
+    >
+      {icon}
+      {label}
+    </motion.button>
+  );
+}
+
 function ghostButtonStyle(): React.CSSProperties {
   return {
     background: 'rgba(61,64,91,0.06)',
@@ -1226,17 +1429,28 @@ function ghostButtonStyle(): React.CSSProperties {
 function DetailFact({ label, value }: { label: string; value?: string }) {
   return (
     <div>
-      <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 10, color: 'rgba(61,64,91,0.55)', letterSpacing: '0.14em', textTransform: 'uppercase', margin: 0 }}>
+      <p
+        style={{
+          fontFamily: 'var(--font-serif)',
+          fontStyle: 'italic',
+          fontVariationSettings: '"opsz" 18',
+          fontSize: 13,
+          color: 'rgba(61,64,91,0.62)',
+          letterSpacing: '-0.005em',
+          margin: 0,
+        }}
+      >
         {label}
       </p>
       <p
         style={{
           fontFamily: 'var(--font-serif)',
-          fontVariationSettings: '"opsz" 24',
+          fontVariationSettings: '"opsz" 36, "SOFT" 30',
           fontSize: 22,
           color: '#3D405B',
-          margin: '6px 0 0',
-          letterSpacing: '-0.015em',
+          margin: '4px 0 0',
+          letterSpacing: '-0.018em',
+          lineHeight: 1.1,
         }}
       >
         {value || <span style={{ fontStyle: 'italic', color: 'rgba(61,64,91,0.4)', fontSize: 16 }}>not set</span>}

@@ -56,7 +56,7 @@ export function TranslatorScreen({ onBack }: Props) {
   return (
     <div className="w-full h-full overflow-y-auto" style={{ background: '#F5F2E4', paddingBottom: 48 }}>
       <header
-        className="px-5 flex items-center justify-between"
+        className="px-5 flex items-center"
         style={{ paddingTop: 'max(env(safe-area-inset-top, 0px), 18px)', paddingBottom: 12 }}
       >
         <button
@@ -69,43 +69,19 @@ export function TranslatorScreen({ onBack }: Props) {
           </svg>
           Back
         </button>
-        <span
-          style={{
-            fontFamily: 'Inter',
-            fontWeight: 500,
-            fontSize: 11,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: 'rgba(61,64,91,0.5)',
-          }}
-        >
-          Unlimited
-        </span>
       </header>
 
       <div className="px-6 mt-2">
-        <p
-          style={{
-            fontFamily: 'Inter',
-            fontWeight: 500,
-            fontSize: 10.5,
-            letterSpacing: '0.28em',
-            textTransform: 'uppercase',
-            color: 'rgba(61,64,91,0.5)',
-          }}
-        >
-          The Translator
-        </p>
         <h1
           style={{
             fontFamily: 'Fraunces',
-            fontVariationSettings: '"opsz" 96, "SOFT" 40',
+            fontVariationSettings: '"opsz" 96, "SOFT" 50',
             fontWeight: 400,
-            fontSize: 'clamp(38px, 9.2vw, 48px)',
-            lineHeight: 0.96,
-            letterSpacing: '-0.028em',
+            fontSize: 'clamp(40px, 9.6vw, 50px)',
+            lineHeight: 0.95,
+            letterSpacing: '-0.03em',
             color: '#3D405B',
-            margin: '6px 0 0',
+            margin: 0,
           }}
         >
           Doctor-speak,
@@ -121,11 +97,12 @@ export function TranslatorScreen({ onBack }: Props) {
             fontSize: 15,
             color: 'rgba(61,64,91,0.6)',
             margin: '14px 0 0',
-            lineHeight: 1.4,
+            lineHeight: 1.45,
             maxWidth: 320,
+            letterSpacing: '-0.005em',
           }}
         >
-          Paste a lab value, a prescription, a discharge note — anything that left you guessing.
+          Lab values, prescriptions, discharge notes. Anything that left you guessing.
         </p>
       </div>
 
@@ -155,64 +132,64 @@ export function TranslatorScreen({ onBack }: Props) {
               color: '#3D405B',
             }}
           />
-          <div className="flex items-center justify-between mt-2">
-            <div className="flex gap-4 items-center">
+          <div className="flex items-center justify-between mt-3" style={{ gap: 10 }}>
+            <div className="flex items-center" style={{ gap: 14 }}>
               <button
-                onClick={() => run(SAMPLE)}
-                className="active:opacity-70"
+                onClick={() => {
+                  const sample = 'The doctor said I have acute suppurative otitis media and prescribed Amoxicillin 400mg BID x10 days.';
+                  setInput(sample);
+                  run(sample);
+                }}
+                className="active:opacity-70 flex items-center"
                 style={{
-                  fontFamily: 'Inter',
-                  fontWeight: 600,
-                  fontSize: 13,
-                  color: 'rgba(61,64,91,0.5)',
+                  fontFamily: 'Fraunces',
+                  fontStyle: 'italic',
+                  fontVariationSettings: '"opsz" 18',
+                  fontSize: 13.5,
+                  color: 'rgba(61,64,91,0.62)',
+                  letterSpacing: '-0.005em',
+                  gap: 6,
                 }}
               >
-                Try an example
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M8 2v12M2 8h12" opacity="0.5" />
+                  <circle cx="8" cy="8" r="6.5" />
+                </svg>
+                Try a sample
               </button>
-              <button className="active:opacity-70 cursor-pointer flex items-center gap-1.5"
+              <button
                 onClick={() => setShowCamera(true)}
+                className="active:opacity-70 flex items-center"
                 style={{
-                  fontFamily: 'Inter',
-                  fontWeight: 600,
-                  fontSize: 13,
-                  color: 'rgba(61,64,91,0.5)',
+                  fontFamily: 'Fraunces',
+                  fontStyle: 'italic',
+                  fontVariationSettings: '"opsz" 18',
+                  fontSize: 13.5,
+                  color: 'rgba(61,64,91,0.62)',
+                  letterSpacing: '-0.005em',
+                  gap: 6,
                 }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                   <path d="M3 9a2 2 0 012-2h2l2-2h6l2 2h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <circle cx="12" cy="13" r="3.5" />
                 </svg>
-                Scan Handout
+                Scan a handout
               </button>
             </div>
-            <button
-              onClick={() => {
-                const sample = "The doctor said I have acute suppurative otitis media and prescribed Amoxicillin 400mg BID x10 days.";
-                setInput(sample);
-                run(sample);
-              }}
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 500,
-                fontSize: 12.5,
-                color: 'rgba(61,64,91,0.55)',
-                textDecoration: 'underline',
-                textDecorationStyle: 'dotted',
-                textUnderlineOffset: 3,
-              }}
-            >
-              try a sample
-            </button>
-            <span
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 500,
-                fontSize: 11,
-                color: 'rgba(61,64,91,0.4)',
-              }}
-            >
-              {input.length} / 1000
-            </span>
+            {input.length > 800 && (
+              <span
+                style={{
+                  fontFamily: 'Fraunces',
+                  fontStyle: 'italic',
+                  fontVariationSettings: '"opsz" 11',
+                  fontSize: 11,
+                  color: input.length > 950 ? '#C25E45' : 'rgba(61,64,91,0.5)',
+                }}
+              >
+                {1000 - input.length} left
+              </span>
+            )}
           </div>
         </div>
 
@@ -301,12 +278,12 @@ export function TranslatorScreen({ onBack }: Props) {
             >
               <p
                 style={{
-                  fontFamily: 'Inter',
-                  fontWeight: 500,
-                  fontSize: 10.5,
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(61,64,91,0.5)',
+                  fontFamily: 'Fraunces',
+                  fontStyle: 'italic',
+                  fontVariationSettings: '"opsz" 18',
+                  fontSize: 13,
+                  color: 'rgba(61,64,91,0.55)',
+                  letterSpacing: '-0.005em',
                 }}
               >
                 Not confident
@@ -314,15 +291,16 @@ export function TranslatorScreen({ onBack }: Props) {
               <p
                 style={{
                   fontFamily: 'Fraunces',
-                  fontVariationSettings: '"opsz" 36',
+                  fontStyle: 'italic',
+                  fontVariationSettings: '"opsz" 72, "SOFT" 40',
                   fontSize: 22,
-                  lineHeight: 1.15,
+                  lineHeight: 1.2,
                   color: '#3D405B',
-                  margin: '8px 0 6px',
-                  letterSpacing: '-0.015em',
+                  margin: '6px 0 8px',
+                  letterSpacing: '-0.02em',
                 }}
               >
-                <span style={{ fontStyle: 'italic' }}>Pip couldn't read this one cleanly.</span>
+                Pip couldn't read this one cleanly.
               </p>
               <p style={{ fontFamily: 'Inter', fontWeight: 400, fontSize: 14, lineHeight: 1.5, color: 'rgba(61,64,91,0.7)' }}>
                 Try simpler terms, or ask your provider directly.
@@ -366,12 +344,12 @@ export function TranslatorScreen({ onBack }: Props) {
                   />
                   <p
                     style={{
-                      fontFamily: 'Inter',
-                      fontWeight: 500,
-                      fontSize: 10.5,
-                      letterSpacing: '0.28em',
-                      textTransform: 'uppercase',
+                      fontFamily: 'Fraunces',
+                      fontStyle: 'italic',
+                      fontVariationSettings: '"opsz" 18',
+                      fontSize: 13,
                       color: '#C25E45',
+                      letterSpacing: '-0.005em',
                     }}
                   >
                     {m.term}
@@ -379,32 +357,44 @@ export function TranslatorScreen({ onBack }: Props) {
                   <p
                     style={{
                       fontFamily: 'Fraunces',
-                      fontVariationSettings: '"opsz" 48, "SOFT" 30',
+                      fontVariationSettings: '"opsz" 72, "SOFT" 40',
                       fontWeight: 400,
-                      fontSize: 22,
+                      fontSize: 23,
                       lineHeight: 1.22,
-                      letterSpacing: '-0.018em',
+                      letterSpacing: '-0.022em',
                       color: '#3D405B',
-                      margin: '8px 0 0',
+                      margin: '6px 0 0',
                     }}
                   >
                     {m.plain}
                   </p>
 
-                  <div className="mt-5" style={{ borderTop: '0.5px dashed rgba(61,64,91,0.18)', paddingTop: 14 }}>
-                    <p
+                  <div className="mt-5" style={{ paddingTop: 12 }}>
+                    <div
+                      className="flex items-baseline justify-between"
                       style={{
-                        fontFamily: 'Inter',
-                        fontWeight: 500,
-                        fontSize: 10,
-                        letterSpacing: '0.28em',
-                        textTransform: 'uppercase',
-                        color: 'rgba(61,64,91,0.5)',
+                        marginBottom: 10,
+                        borderBottom: '0.5px solid rgba(61,64,91,0.18)',
+                        paddingBottom: 5,
                       }}
                     >
-                      Watch for
-                    </p>
-                    <ul className="mt-2 flex flex-col gap-1.5">
+                      <h3
+                        style={{
+                          fontFamily: 'Fraunces',
+                          fontStyle: 'italic',
+                          fontVariationSettings: '"opsz" 24, "SOFT" 40',
+                          fontWeight: 400,
+                          fontSize: 14,
+                          color: '#3D405B',
+                          letterSpacing: '-0.008em',
+                          margin: 0,
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        Watch for
+                      </h3>
+                    </div>
+                    <ul className="flex flex-col gap-1.5">
                       {m.watchFor.map((w) => (
                         <li
                           key={w}
@@ -436,9 +426,10 @@ export function TranslatorScreen({ onBack }: Props) {
                       fontVariationSettings: '"opsz" 11',
                       fontSize: 11.5,
                       color: 'rgba(61,64,91,0.45)',
+                      letterSpacing: '-0.005em',
                     }}
                   >
-                    Source — MedlinePlus Connect
+                    via MedlinePlus Connect
                   </p>
                 </motion.article>
               ))}
@@ -458,7 +449,7 @@ export function TranslatorScreen({ onBack }: Props) {
                   textAlign: 'center',
                 }}
               >
-                Pip explains, never diagnoses. For anything urgent, call your provider or 911.
+                Pip explains, never diagnoses. For emergencies, call 911.
               </motion.p>
             </motion.div>
           )}
